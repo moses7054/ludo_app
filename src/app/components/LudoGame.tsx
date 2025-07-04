@@ -12,8 +12,6 @@ const LudoGame: React.FC = () => {
     }
   }, [players.length, initializePlayers]);
 
-  const currentPlayer = players[turn];
-
   const handleSkipTurn = () => {
     nextTurn();
   };
@@ -26,46 +24,70 @@ const LudoGame: React.FC = () => {
     );
   }
 
-  const playerNames = ["Red", "Green", "Yellow", "Blue"];
-  const playerColors = ["#FF0000", "#008000", "#FDDA0D", "#0000FF"];
+  // Create individual player info components
+  const PlayerInfo = ({ playerIndex }: { playerIndex: number }) => {
+    const player = players[playerIndex];
+    const isCurrentPlayer = turn === playerIndex;
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-8 p-6 bg-gray-100 min-h-screen">
-      {/* Game Board */}
-      <div className="flex justify-center">
-        <LudoBoard />
-      </div>
-
-      {/* Game Controls and Status */}
-      <div className="flex flex-col gap-6 lg:w-80">
-        {/* Current Turn Info */}
-        <div
-          className="p-6 rounded-lg text-white shadow-lg"
-          style={{ backgroundColor: currentPlayer?.colour }}
+    return (
+      <div className="w-64 space-y-4">
+        {/* Player Status */}
+        {/* <div
+          className={`p-4 rounded-lg text-white shadow-lg transition-all ${
+            isCurrentPlayer ? "ring-4 ring-white ring-opacity-50" : ""
+          }`}
+          style={{ backgroundColor: playerColors[playerIndex] }}
         >
-          <h2 className="text-2xl font-bold mb-4">
-            {playerNames[turn]}&apos;s Turn
-          </h2>
-          <div className="space-y-2">
-            <p>Can Roll: {currentPlayer?.canRoll ? "Yes" : "No"}</p>
-            <p>
-              Last Roll: {currentPlayer?.currentRollValue || "Not rolled yet"}
-            </p>
-            <p>Six Count: {currentPlayer?.isSixCount}</p>
+          <div className="flex items-center gap-2 mb-3">
+            <h3 className="text-lg font-bold">{playerNames[playerIndex]}</h3>
+            {isCurrentPlayer && (
+              <span className="text-sm bg-white text-black px-2 py-1 rounded">
+                Current
+              </span>
+            )}
           </div>
-        </div>
+          <div className="space-y-1 text-sm">
+            <p>Can Roll: {player?.canRoll ? "Yes" : "No"}</p>
+            <p>Last Roll: {player?.currentRollValue || "Not rolled yet"}</p>
+            <p>Six Count: {player?.isSixCount}</p>
+            <p>
+              Tokens on board:{" "}
+              {player.token.filter((t) => t.current_position >= 0).length}/4
+            </p>
+          </div>
+        </div> */}
 
-        {/* Game Controls */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold mb-4">Game Controls</h3>
-          <div className="space-y-3">
+        {/* Game Controls - show for all players but gray out when not current turn */}
+        <div
+          className={`bg-white p-4 rounded-lg shadow-lg transition-all ${
+            !isCurrentPlayer ? "opacity-50" : ""
+          }`}
+        >
+          <h4 className="text-lg font-semibold mb-3">
+            Player {playerIndex + 1} Controls
+            {isCurrentPlayer && (
+              <span className="text-sm text-green-600 ml-2">
+                ← Current Turn
+              </span>
+            )}
+          </h4>
+          <div className="space-y-2">
+            <div
+              className={`
+                w-full py-2 px-3 rounded-lg font-semibold text-white transition-all
+                bg-green-500 hover:bg-green-600 cursor-pointer text-center
+                
+              `}
+            >
+              Rolled: {player?.currentRollValue || "Not rolled yet"}
+            </div>
             <button
               onClick={rollDice}
-              disabled={!currentPlayer?.canRoll}
+              disabled={!player?.canRoll || !isCurrentPlayer}
               className={`
-                w-full py-3 px-4 rounded-lg font-semibold text-white transition-all
+                w-full py-2 px-3 rounded-lg font-semibold text-white transition-all
                 ${
-                  currentPlayer?.canRoll
+                  player?.canRoll && isCurrentPlayer
                     ? "bg-green-500 hover:bg-green-600 cursor-pointer"
                     : "bg-gray-400 cursor-not-allowed"
                 }
@@ -73,73 +95,70 @@ const LudoGame: React.FC = () => {
             >
               🎲 Roll Dice
             </button>
-
             <button
               onClick={handleSkipTurn}
-              className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-red-500 hover:bg-red-600 transition-all"
+              disabled={!isCurrentPlayer}
+              className={`
+                w-full py-2 px-3 rounded-lg font-semibold text-white transition-all
+                ${
+                  isCurrentPlayer
+                    ? "bg-red-500 hover:bg-red-600 cursor-pointer"
+                    : "bg-gray-400 cursor-not-allowed"
+                }
+              `}
             >
               ⏭️ Skip Turn
             </button>
           </div>
         </div>
+      </div>
+    );
+  };
 
-        {/* Instructions */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold mb-4">How to Play</h3>
-          <div className="text-sm space-y-2 text-gray-700">
+  return (
+    <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-center">
+      {/* Main Game Layout - Grid positioning */}
+      <div className="relative max-w-7xl mx-auto">
+        {/* Create a grid layout */}
+        <div className="flex gap-8 ">
+          <div className="flex flex-col justify-between">
+            <PlayerInfo playerIndex={0} />
+
+            <PlayerInfo playerIndex={3} />
+          </div>
+
+          <LudoBoard />
+          <div className="flex flex-col justify-between">
+            <PlayerInfo playerIndex={1} />
+            <PlayerInfo playerIndex={2} />
+          </div>
+        </div>
+
+        {/* Instructions - Fixed position */}
+        {/* <div className="absolute top-0 right-0 bg-white p-4 rounded-lg shadow-lg max-w-xs">
+          <h3 className="text-lg font-semibold mb-3">How to Play</h3>
+          <div className="text-sm space-y-1 text-gray-700">
             <p>1. Click &quot;Roll Dice&quot; when it&apos;s your turn</p>
             <p>2. Click on a highlighted token to move it</p>
             <p>3. Roll 6 to bring tokens out of home</p>
             <p>4. Rolling 6 gives you another turn</p>
             <p>5. Three consecutive 6s = forfeit turn</p>
           </div>
-        </div>
+        </div> */}
 
-        {/* Player Status */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-xl font-semibold mb-4">Player Status</h3>
-          <div className="space-y-3">
-            {players.map((player, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded border-2 ${
-                  index === turn
-                    ? "border-gray-400 bg-gray-50"
-                    : "border-gray-200"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: playerColors[index] }}
-                  />
-                  <span className="font-semibold">{playerNames[index]}</span>
-                  {index === turn && (
-                    <span className="text-sm text-green-600">← Current</span>
-                  )}
-                </div>
-                <div className="text-xs text-gray-600">
-                  Tokens on board:{" "}
-                  {player.token.filter((t) => t.current_position >= 0).length}/4
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Debug Info (collapsed by default) */}
-        <details className="bg-white p-6 rounded-lg shadow-lg">
+        {/* Debug Info - Fixed position */}
+        {/* <details className="absolute bottom-0 left-0 bg-white p-4 rounded-lg shadow-lg max-w-xs">
           <summary className="text-lg font-semibold cursor-pointer">
             Debug Info
           </summary>
-          <div className="mt-4 text-xs">
+          <div className="mt-3 text-xs">
             <p>Current Turn: {turn}</p>
             <p>Total Players: {players.length}</p>
-            <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-40">
+            <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-32">
               {JSON.stringify({ turn, players }, null, 2)}
             </pre>
           </div>
-        </details>
+        </details> */}
       </div>
     </div>
   );
