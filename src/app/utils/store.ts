@@ -32,7 +32,7 @@ export const useStore = create<GameState>((set, get) => ({
   players: [],
 
   initializePlayers: () => {
-    const colors = ["red", "blue", "green", "yellow"];
+    const colors = ["red", "green", "yellow", "blue"];
     const initialPlayers: Player[] = colors.map((color, index) => ({
       turn: index,
       colour: color,
@@ -73,7 +73,9 @@ export const useStore = create<GameState>((set, get) => ({
         if (player.isSixCount >= 3) {
           player.isSixCount = 0;
           // Move to next turn without allowing token selection
-          return { ...state, players: newPlayers };
+          const nextTurn = (state.turn + 1) % 4;
+          newPlayers[nextTurn].canRoll = true;
+          return { ...state, players: newPlayers, turn: nextTurn };
         }
       } else {
         player.isSixCount = 0;
@@ -92,6 +94,19 @@ export const useStore = create<GameState>((set, get) => ({
           token.new_position = -1; // Can't move
         }
       });
+
+      // Check if player has any valid moves
+      const hasValidMoves = player.token.some(
+        (token) => token.new_position !== -1
+      );
+
+      // If no valid moves available, automatically move to next player
+      if (!hasValidMoves) {
+        player.isSixCount = 0;
+        const nextTurn = (state.turn + 1) % 4;
+        newPlayers[nextTurn].canRoll = true;
+        return { ...state, players: newPlayers, turn: nextTurn };
+      }
 
       return { ...state, players: newPlayers };
     });
