@@ -1,6 +1,6 @@
 import { WalletConnectButton } from "./components/WalletConnectButton";
-import { GameManager } from "./components/GameManager";
-import { GeneratedCodeHelper } from "./components/GeneratedCodeHelper";
+// import { GameManager } from "./components/GameManager";
+// import { GeneratedCodeHelper } from "./components/GeneratedCodeHelper";
 import Link from "next/link";
 
 export default function Home() {
@@ -15,7 +15,6 @@ export default function Home() {
             games
           </p>
         </div>
-
         {/* Play Game Button */}
         <div className="flex justify-center">
           <Link
@@ -25,22 +24,18 @@ export default function Home() {
             🎲 Play Ludo Game
           </Link>
         </div>
-
         {/* Wallet Connect Section */}
         <div className="flex justify-center">
           <WalletConnectButton />
         </div>
-
-        {/* Game Manager Section */}
-        <div className="mt-12">
+        Game Manager Section
+        {/* <div className="mt-12">
           <GameManager />
-        </div>
-
+        </div> */}
         {/* Generated Code Helper */}
-        <div className="mt-12">
+        {/* <div className="mt-12">
           <GeneratedCodeHelper />
-        </div>
-
+        </div> */}
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
@@ -67,7 +62,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-
         {/* Instructions */}
         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mt-8">
           <h3 className="text-xl font-semibold text-white mb-4">
