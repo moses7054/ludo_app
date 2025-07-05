@@ -1,0 +1,18 @@
+Sprite positons : Total 16 positions.
+1 position: standing still, facing down.
+2 position: walking down, facing down.
+3 position: walking down, facing down 2 step.
+4 position: standing still, facing left.
+5 position: walking left, facing left.
+6 position: walking left, facing left 2 step.
+7 position: standing still, facing behind. We see his back.
+8 position: walking up, facing behind.
+9 position: walking up, facing behind 2 step.
+10 position: standing still, facing right.
+11 position: walking right, facing right.
+12 position: walking right, facing right 2 step.
+
+last 4 are dancing moves.
+
+
+
